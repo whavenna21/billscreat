@@ -455,33 +455,26 @@
   }
 
   function buildDropdowns(){
+    // Detecta melhor coluna de data automaticamente e guarda em qDateCol.dataset.auto
     const dateCols = guessDateColumns();
     const dcSel = el("qDateCol");
+    // (qDateCol é hidden; mantemos opções apenas para compatibilidade interna)
     dcSel.innerHTML = `<option value="">(automático)</option>` + header.map(h=>`<option value="${h.replaceAll('"','&quot;')}">${h}</option>`).join("");
     dcSel.dataset.auto = dateCols.length ? dateCols[0] : "";
 
-    // Responsável / Prioridade (se existirem)
-    const colOwner = findColByNames(["Responsável","Responsavel","Responsavel(a)","Owner"]);
-    const colPrio  = findColByNames(["Prioridade","Priority"]);
-    el("qOwner").dataset.col = colOwner;
-    el("qPriority").dataset.col = colPrio;
-
     const uniq = (arr)=>[...new Set(arr.map(norm).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
 
+    // Responsável
+    const colOwner = findColByNames(["Responsável","Responsavel","Owner"]);
+    el("qOwner").dataset.col = colOwner;
     const ownerSel = el("qOwner");
     ownerSel.innerHTML = `<option value="">Todos</option>` + (colOwner ? uniq(rows.map(r=>r[colOwner])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
-    const prioSel = el("qPriority");
-    prioSel.innerHTML = `<option value="">Todas</option>` + (colPrio ? uniq(rows.map(r=>r[colPrio])).map(v=>`<option value="${v.replaceAll('"','&quot;
 
+    // Situação
     const colStatus = findColByNames(["Situação","Situacao","Status"]);
     el("qStatus").dataset.col = colStatus;
     const statusSel = el("qStatus");
-    statusSel.innerHTML = `<option value="">Todas</option>` + (colStatus ? uniq(rows.map(r=>r[colStatus])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");')}">${v}</option>`).join("") : "");
-
-    // escolher coluna de valor para somar (fixa: Valor, se existir)
-    const valCol = findColByNames(["Valor","Value","Amount"]);
-    el("kpiTotal").dataset.col = valCol || "";
-    el("kpiTotalHint").textContent = "coluna: " + (valCol || "(auto)");
+    statusSel.innerHTML = `<option value="">Todas</option>` + (colStatus ? uniq(rows.map(r=>r[colStatus])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
 
     rebuildMonths();
   }
@@ -531,10 +524,8 @@
     const limit = 500;
 
     const ownerCol = el("qOwner").dataset.col || "";
-    const prioCol  = el("qPriority").dataset.col || "";
-    const owner = el("qOwner").value;
-    const prio  = el("qPriority").value;
-    const statusCol = el("qStatus").dataset.col || "";
+    const prioCol  =     const owner = el("qOwner").value;
+    const prio  =     const statusCol = el("qStatus").dataset.col || "";
     const status = el("qStatus").value;
 
     filtered = rows.filter(r=>{
