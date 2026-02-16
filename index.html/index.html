@@ -181,7 +181,64 @@
       }
       tbody td:last-child{border-bottom:none}
     }
-  </style>
+  
+    /* Compact filter bar (como no print) */
+    .filterBar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      padding:10px;
+      border-radius:14px;
+      background:var(--card2);
+      border:1px solid rgba(255,122,0,.16);
+    }
+    .filterBar .btnGhost{
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:850;
+      white-space:nowrap;
+    }
+    .fbField{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+    body.light .fbField{ background:rgba(255,255,255,.55); }
+    .fbLabel{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .fbField select, .fbField input{
+      border:none !important;
+      padding:0 !important;
+      outline:none !important;
+      background:transparent !important;
+      min-width:110px;
+      font-size:14px;
+      color:var(--text);
+    }
+    body.light .fbField select, body.light .fbField input{ color:var(--text); }
+    .fbSearch{
+      flex:1;
+      min-width:220px;
+    }
+    .fbSearch input{ width:100%; min-width:220px; }
+    @media (max-width:720px){
+      .filterBar{gap:8px; padding:10px}
+      .fbSearch{flex:1 1 100%;}
+      .fbField{flex:1 1 auto}
+      .fbField select{min-width:90px}
+      .filterBar .btnGhost{flex:0 0 auto}
+    }
+
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -217,53 +274,32 @@
       <div class="sep"></div>
 
       <h2>Filtros</h2>
-      <div class="controls">
-        <div>
-          <label for="qSearch">Busca geral</label>
-          <input id="qSearch" placeholder="busca em todas as colunas" />
+      <div class="filterBar" id="filterBar">
+        <button class="btnGhost" id="btnLoad2" type="button">Recarregar</button>
+
+        <div class="fbField fbSearch">
+          <input id="qSearch" placeholder="Buscar   Ex.: aluguel, netflix, renê..." />
         </div>
 
-        <div>
-          <label for="qOwner">Responsável</label>
+        <div class="fbField">
+          <span class="fbLabel">Responsável</span>
           <select id="qOwner"><option value="">Todos</option></select>
         </div>
 
-        <div>
-          <label for="qPriority">Prioridade</label>
-          <select id="qPriority"><option value="">Todas</option></select>
-        </div>
-
-        <div>
-          <label for="qStatus">Situação</label>
-          <select id="qStatus"><option value="">Todas</option></select>
-        </div>
-
-        <div>
-          <label for="qMonth">Mês (coluna de data)</label>
+        <div class="fbField">
+          <span class="fbLabel">Mês</span>
           <select id="qMonth"><option value="">Todos</option></select>
         </div>
 
-        
-
-        <div>
-          <label for="qDateFrom">Data (de)</label>
-          <input id="qDateFrom" type="date" />
-        </div>
-
-        <div>
-          <label for="qDateTo">Data (até)</label>
-          <input id="qDateTo" type="date" />
-        </div>
-
-        
-
-        <div>
-          <label for="btnLoad">Atualização</label>
-          <button id="btnLoad" style="width:100%">Carregar/Atualizar</button>
+        <div class="fbField">
+          <span class="fbLabel">Situação</span>
+          <select id="qStatus"><option value="">Todas</option></select>
         </div>
       </div>
 
       <div class="chips" id="chips"></div>
+
+      <select id="qDateCol" class="hidden"></select>
 
       <div class="tableWrap">
         <table>
@@ -476,9 +512,6 @@
     const owner = el("qOwner").value;
     if(owner) add("Responsável", owner);
 
-    const pr = el("qPriority").value;
-    if(pr) add("Prioridade", pr);
-
     const st = el("qStatus").value;
     if(st) add("Situação", st);
 
@@ -486,12 +519,6 @@
 
     const m = el("qMonth").value;
     if(m) add("Mês", monthLabel(m));
-
-    const df = el("qDateFrom").value;
-    const dt = el("qDateTo").value;
-    if(df || dt){
-      const pretty = (x)=>x ? x.split("-").reverse().join("/") : "";
-      add("Período", `${pretty(df)}${dt ? " → " + pretty(dt) : ""}`);
     }
 
     el("chips").innerHTML = chips.length ? chips.join("") : `<span class="chip"><strong>Sem filtros</strong></span>`;
@@ -510,30 +537,17 @@
     const statusCol = el("qStatus").dataset.col || "";
     const status = el("qStatus").value;
 
-    const from = isoToDateUTC(el("qDateFrom").value);
-    const to   = isoToDateUTC(el("qDateTo").value);
-    // incluir o "até" como final do dia
-    const toEnd = to ? new Date(to.getTime() + 24*60*60*1000 - 1) : null;
-
     filtered = rows.filter(r=>{
       if(q){
         const all = header.map(h=>normKey(r[h])).join(" | ");
         if(!all.includes(q)) return false;
       }
       if(ownerCol && owner && norm(r[ownerCol]) !== owner) return false;
-      if(prioCol && prio && norm(r[prioCol]) !== prio) return false;
       if(statusCol && status && norm(r[statusCol]) !== status) return false;
 
       if(month && dateCol){
         const mk = monthKeyFromDateStr(r[dateCol]);
         if(mk !== month) return false;
-      }
-
-      if((from || toEnd) && dateCol){
-        const dtv = parseDateBR(r[dateCol]);
-        if(!dtv) return false;
-        if(from && dtv < from) return false;
-        if(toEnd && dtv > toEnd) return false;
       }
 
       return true;
@@ -677,9 +691,10 @@
   }
 
   el("btnLoad").addEventListener("click", loadCSV);
+  el("btnLoad2").addEventListener("click", loadCSV);
   el("btnExport").addEventListener("click", exportFiltered);
 
-  ["qSearch","qOwner","qPriority","qStatus","qMonth","qDateFrom","qDateTo"].forEach(id=>{
+  ["qSearch","qOwner","qStatus","qMonth"].forEach(id=>{
     el(id).addEventListener("input", ()=>{
       if(id==="qDateCol") rebuildMonths();
       applyFilters();
