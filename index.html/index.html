@@ -234,14 +234,16 @@
         </div>
 
         <div>
+          <label for="qStatus">Situação</label>
+          <select id="qStatus"><option value="">Todas</option></select>
+        </div>
+
+        <div>
           <label for="qMonth">Mês (coluna de data)</label>
           <select id="qMonth"><option value="">Todos</option></select>
         </div>
 
-        <div>
-          <label for="qDateCol">Coluna de data</label>
-          <select id="qDateCol"><option value="">(automático)</option></select>
-        </div>
+        
 
         <div>
           <label for="qDateFrom">Data (de)</label>
@@ -253,15 +255,7 @@
           <input id="qDateTo" type="date" />
         </div>
 
-        <div>
-          <label for="qLimit">Limite de linhas</label>
-          <select id="qLimit">
-            <option value="200">200</option>
-            <option value="500" selected>500</option>
-            <option value="1000">1000</option>
-            <option value="5000">5000</option>
-          </select>
-        </div>
+        
 
         <div>
           <label for="btnLoad">Atualização</label>
@@ -441,7 +435,12 @@
     const ownerSel = el("qOwner");
     ownerSel.innerHTML = `<option value="">Todos</option>` + (colOwner ? uniq(rows.map(r=>r[colOwner])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
     const prioSel = el("qPriority");
-    prioSel.innerHTML = `<option value="">Todas</option>` + (colPrio ? uniq(rows.map(r=>r[colPrio])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
+    prioSel.innerHTML = `<option value="">Todas</option>` + (colPrio ? uniq(rows.map(r=>r[colPrio])).map(v=>`<option value="${v.replaceAll('"','&quot;
+
+    const colStatus = findColByNames(["Situação","Situacao","Status"]);
+    el("qStatus").dataset.col = colStatus;
+    const statusSel = el("qStatus");
+    statusSel.innerHTML = `<option value="">Todas</option>` + (colStatus ? uniq(rows.map(r=>r[colStatus])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");')}">${v}</option>`).join("") : "");
 
     // escolher coluna de valor para somar (fixa: Valor, se existir)
     const valCol = findColByNames(["Valor","Value","Amount"]);
@@ -452,7 +451,7 @@
   }
 
   function effectiveDateCol(){
-    return el("qDateCol").value || el("qDateCol").dataset.auto || "";
+    return el("qDateCol")?.dataset?.auto || "";
   }
 
   function rebuildMonths(){
@@ -480,6 +479,9 @@
     const pr = el("qPriority").value;
     if(pr) add("Prioridade", pr);
 
+    const st = el("qStatus").value;
+    if(st) add("Situação", st);
+
     add("Data", effectiveDateCol() ? effectiveDateCol() : "");
 
     const m = el("qMonth").value;
@@ -499,12 +501,14 @@
     const q = normKey(el("qSearch").value);
     const month = el("qMonth").value;
     const dateCol = effectiveDateCol();
-    const limit = Number(el("qLimit").value) || 500;
+    const limit = 500;
 
     const ownerCol = el("qOwner").dataset.col || "";
     const prioCol  = el("qPriority").dataset.col || "";
     const owner = el("qOwner").value;
     const prio  = el("qPriority").value;
+    const statusCol = el("qStatus").dataset.col || "";
+    const status = el("qStatus").value;
 
     const from = isoToDateUTC(el("qDateFrom").value);
     const to   = isoToDateUTC(el("qDateTo").value);
@@ -518,6 +522,7 @@
       }
       if(ownerCol && owner && norm(r[ownerCol]) !== owner) return false;
       if(prioCol && prio && norm(r[prioCol]) !== prio) return false;
+      if(statusCol && status && norm(r[statusCol]) !== status) return false;
 
       if(month && dateCol){
         const mk = monthKeyFromDateStr(r[dateCol]);
@@ -674,7 +679,7 @@
   el("btnLoad").addEventListener("click", loadCSV);
   el("btnExport").addEventListener("click", exportFiltered);
 
-  ["qSearch","qOwner","qPriority","qMonth","qDateCol","qDateFrom","qDateTo","qLimit"].forEach(id=>{
+  ["qSearch","qOwner","qPriority","qStatus","qMonth","qDateFrom","qDateTo"].forEach(id=>{
     el(id).addEventListener("input", ()=>{
       if(id==="qDateCol") rebuildMonths();
       applyFilters();
