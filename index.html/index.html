@@ -9,7 +9,7 @@
       --accent:#ff7a00;
       --accent2:#ff9a3c;
 
-      /* Dark (default) */
+      /* Dark */
       --bg: linear-gradient(180deg, #070a10 0%, #0b0f17 60%);
       --card: rgba(18,26,39,.92);
       --card2: rgba(8,12,20,.55);
@@ -63,7 +63,7 @@
       border:none;
       padding:10px 12px;
       border-radius:12px;
-      font-weight:750;
+      font-weight:800;
       color:white;
       background:linear-gradient(180deg,var(--accent2),var(--accent));
       box-shadow:0 10px 25px rgba(255,122,0,.18);
@@ -91,98 +91,15 @@
     .card h2{margin:0 0 10px;font-size:14px;font-weight:900}
     .sep{height:1px;background:rgba(36,50,74,.35);margin:12px 0}
 
-    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media (max-width:980px){.grid2{grid-template-columns:1fr}}
 
-    /* KPIs do resumo (2 cards) */
-    #kpiGrid{grid-template-columns:repeat(2,1fr)}
-    @media (max-width:980px){#kpiGrid{grid-template-columns:1fr}}
-
-    @media (max-width:980px){.grid4{grid-template-columns:repeat(2,1fr)}}
     .kpi{padding:12px;border-radius:14px;background:var(--card2);border:1px solid rgba(255,122,0,.18)}
     .kpi .label{color:var(--muted);font-size:12px}
     .kpi .value{margin-top:6px;font-size:18px;font-weight:950}
     .kpi .hint{margin-top:6px;font-size:12px;color:var(--muted)}
 
-    .controls{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-    @media (max-width:980px){.controls{grid-template-columns:repeat(2,1fr)}}
-    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:800}
-    input,select{
-      width:100%;
-      background:transparent;
-      border:1px solid var(--line);
-      color:var(--text);
-      padding:10px 10px;
-      border-radius:12px;
-      outline:none;
-    }
-    input:focus,select:focus{border-color:rgba(255,122,0,.55);box-shadow:0 0 0 3px rgba(255,122,0,.12)}
-
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .chip{background:var(--chip);border:1px solid rgba(255,122,0,.18);padding:6px 10px;border-radius:999px;font-size:12px}
-    .chip strong{font-weight:950}
-
-    .tableWrap{overflow:auto;border-radius:14px;border:1px solid var(--line);margin-top:12px;
-      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;}
-    table{width:100%;border-collapse:collapse;min-width:900px;background:rgba(8,12,20,.10)}
-    body.light table{background:rgba(255,255,255,.6)}
-    thead th{
-      position:sticky;top:0;
-      background:rgba(255,122,0,.12);
-      text-align:left;padding:10px;border-bottom:1px solid var(--line);
-      font-size:12px;white-space:nowrap
-    }
-    tbody td{padding:10px;border-bottom:1px solid rgba(36,50,74,.22);font-size:13px;vertical-align:top}
-    tbody tr:hover{background:rgba(255,122,0,.06)}
-    .small{font-size:12px;color:var(--muted);line-height:1.35}
-    .note{margin-top:10px;padding:10px;border-radius:12px;background:rgba(255,122,0,.08);border:1px solid rgba(255,122,0,.25);font-size:13px}
-    .hidden{display:none !important}
-
-    /* ===== Mobile improvements (mantém desktop igual) ===== */
-    @media (max-width: 720px){
-      .wrap{padding:14px}
-      header{gap:10px}
-      h1{font-size:18px}
-      .sub{font-size:12.5px}
-      .topActions{width:100%}
-      .topActions .pill{flex:1}
-      .topActions button{flex:1; padding:12px 12px}
-      .grid4{grid-template-columns:repeat(2,1fr)}
-      .controls{grid-template-columns:1fr !important}
-      input,select{padding:12px 12px; font-size:16px} /* evita zoom iOS */
-    }
-    @media (max-width: 480px){
-      .grid4{grid-template-columns:1fr}
-      .topActions button{width:100%}
-    }
-
-    /* Cards automáticos para tabelas no mobile */
-    @media (max-width: 720px){
-      table{min-width:0}
-      thead{display:none}
-      tbody tr{
-        display:block;
-        margin:10px 0;
-        border:1px solid var(--line);
-        border-radius:14px;
-        overflow:hidden;
-        background:rgba(255,122,0,.04);
-      }
-      tbody td{
-        display:flex;
-        justify-content:space-between;
-        gap:12px;
-        border-bottom:1px solid rgba(36,50,74,.18);
-      }
-      tbody td::before{
-        content: attr(data-label);
-        font-weight:900;
-        color: var(--muted);
-        white-space:nowrap;
-      }
-      tbody td:last-child{border-bottom:none}
-    }
-  
-    /* Compact filter bar (como no print) */
+    /* Compact filter bar */
     .filterBar{
       display:flex;
       align-items:center;
@@ -224,41 +141,92 @@
       font-size:14px;
       color:var(--text);
     }
-    body.light .fbField select, body.light .fbField input{ color:var(--text); }
-    .fbSearch{
-      flex:1;
-      min-width:220px;
-    }
-    .fbSearch input{ width:100%; min-width:220px; }
+    .fbSearch{flex:1; min-width:220px;}
+    .fbSearch input{width:100%; min-width:220px;}
+
     @media (max-width:720px){
+      .wrap{padding:14px}
+      h1{font-size:18px}
+      .sub{font-size:12.5px}
+      .topActions{width:100%}
+      .topActions .pill{flex:1}
+      .topActions button{flex:1; padding:12px 12px}
       .filterBar{gap:8px; padding:10px}
-      .fbSearch{flex:1 1 100%;}
+      .fbSearch{flex:1 1 100%}
       .fbField{flex:1 1 auto}
       .fbField select{min-width:90px}
-      .filterBar .btnGhost{flex:0 0 auto}
+      .fbField input{font-size:16px} /* evita zoom iOS */
     }
 
-</style>
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{background:var(--chip);border:1px solid rgba(255,122,0,.18);padding:6px 10px;border-radius:999px;font-size:12px}
+    .chip strong{font-weight:950}
+
+    .tableWrap{
+      overflow:auto;border-radius:14px;border:1px solid var(--line);margin-top:12px;
+      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    }
+    table{width:100%;border-collapse:collapse;min-width:900px;background:rgba(8,12,20,.10)}
+    body.light table{background:rgba(255,255,255,.6)}
+    thead th{
+      position:sticky;top:0;
+      background:rgba(255,122,0,.12);
+      text-align:left;padding:10px;border-bottom:1px solid var(--line);
+      font-size:12px;white-space:nowrap
+    }
+    tbody td{padding:10px;border-bottom:1px solid rgba(36,50,74,.22);font-size:13px;vertical-align:top}
+    tbody tr:hover{background:rgba(255,122,0,.06)}
+
+    /* Mobile: table to cards */
+    @media (max-width: 720px){
+      table{min-width:0}
+      thead{display:none}
+      tbody tr{
+        display:block;
+        margin:10px 0;
+        border:1px solid var(--line);
+        border-radius:14px;
+        overflow:hidden;
+        background:rgba(255,122,0,.04);
+      }
+      tbody td{
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        border-bottom:1px solid rgba(36,50,74,.18);
+      }
+      tbody td::before{
+        content: attr(data-label);
+        font-weight:900;
+        color: var(--muted);
+        white-space:nowrap;
+      }
+      tbody td:last-child{border-bottom:none}
+    }
+
+    .small{font-size:12px;color:var(--muted);line-height:1.35}
+    .note{margin-top:10px;padding:10px;border-radius:12px;background:rgba(255,122,0,.08);border:1px solid rgba(255,122,0,.25);font-size:13px}
+    .hidden{display:none !important}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div>
         <h1>Painel — Controle (CSV)</h1>
-        <div class="sub">
-          Carrega o CSV publicado do Google Sheets e cria uma visão com filtros e somatórios.
-        </div>
+        <div class="sub">Carrega o CSV publicado do Google Sheets e cria uma visão com filtros e somatórios.</div>
       </div>
       <div class="topActions">
         <span class="pill" id="statusPill">CSV: aguardando…</span>
-        <button class="btnGhost" id="btnTheme">Tema: Escuro</button>
-        <button class="btnGhost" id="btnExport">Exportar (filtrado)</button>
+        <button class="btnGhost" id="btnTheme" type="button">Tema: Escuro</button>
+        <button class="btnGhost" id="btnExport" type="button">Exportar (filtrado)</button>
       </div>
     </header>
 
     <section class="card">
       <h2>Resumo</h2>
-      <div class="grid4" id="kpiGrid">
+      <div class="grid2">
         <div class="kpi">
           <div class="label">Total (conforme filtros)</div>
           <div class="value" id="kpiTotal">—</div>
@@ -274,8 +242,8 @@
       <div class="sep"></div>
 
       <h2>Filtros</h2>
-      <div class="filterBar" id="filterBar">
-        <button class="btnGhost" id="btnLoad2" type="button">Recarregar</button>
+      <div class="filterBar">
+        <button class="btnGhost" id="btnReload" type="button">Recarregar</button>
 
         <div class="fbField fbSearch">
           <input id="qSearch" placeholder="Buscar   Ex.: aluguel, netflix, renê..." />
@@ -299,8 +267,6 @@
 
       <div class="chips" id="chips"></div>
 
-      <select id="qDateCol" class="hidden"></select>
-
       <div class="tableWrap">
         <table>
           <thead><tr id="thead"></tr></thead>
@@ -315,303 +281,280 @@
       <h2>Fonte de dados (CSV)</h2>
       <div class="small">Se trocar o <code>gid</code> da aba publicada, atualize a URL abaixo.</div>
       <div class="sep"></div>
-      <div class="controls" style="grid-template-columns:1fr">
-        <div>
-          <label for="csvUrl">URL</label>
-          <input id="csvUrl" />
-        </div>
-      </div>
+      <div class="small" style="margin-bottom:8px">URL</div>
+      <input id="csvUrl" />
     </section>
   </div>
 
 <script>
+(function() {
   const el = (id)=>document.getElementById(id);
-  const norm = (s)=>String(s??"").trim();
+  const norm = (s)=>String(s ?? "").trim();
   const normKey = (s)=>norm(s).toLowerCase();
 
-  function findColByNames(possible){
-    const map = header.map(h=>({h, k:normKey(h)}));
-    for(const name of possible){
-      const nk = normKey(name);
-      const exact = map.find(x=>x.k===nk);
-      if(exact) return exact.h;
-    }
-    // contains match
-    for(const name of possible){
-      const nk = normKey(name);
-      const contains = map.find(x=>x.k.includes(nk));
-      if(contains) return contains.h;
-    }
-    return "";
-  }
-
-  function isoToDateUTC(iso){
-    // iso yyyy-mm-dd
-    const m = String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if(!m) return null;
-    return new Date(Date.UTC(Number(m[1]), Number(m[2])-1, Number(m[3])));
-  }
-
-
-  function applyTheme(theme){
-    document.body.classList.toggle("light", theme==="light");
-    el("btnTheme").textContent = "Tema: " + (theme==="light" ? "Claro" : "Escuro");
+  // ===== Theme =====
+  function applyTheme(theme) {
+    document.body.classList.toggle("light", theme === "light");
+    el("btnTheme").textContent = "Tema: " + (theme === "light" ? "Claro" : "Escuro");
     localStorage.setItem("csv_theme", theme);
   }
-  el("btnTheme").addEventListener("click", ()=>{
+  el("btnTheme").addEventListener("click", ()=> {
     const cur = document.body.classList.contains("light") ? "light" : "dark";
-    applyTheme(cur==="light" ? "dark" : "light");
+    applyTheme(cur === "light" ? "dark" : "light");
   });
   applyTheme(localStorage.getItem("csv_theme") || "dark");
 
-  function setStatus(text, kind=""){
+  function setStatus(text, kind="") {
     const pill = el("statusPill");
     pill.textContent = text;
-    pill.style.borderColor = kind==="bad" ? "rgba(251,113,133,.55)" : (kind==="good" ? "rgba(34,197,94,.45)" : "rgba(255,122,0,.25)");
-    pill.style.background = kind==="bad" ? "rgba(251,113,133,.12)" : (kind==="good" ? "rgba(34,197,94,.12)" : "rgba(255,122,0,.10)");
+    pill.style.borderColor =
+      kind==="bad"  ? "rgba(251,113,133,.55)" :
+      kind==="good" ? "rgba(34,197,94,.45)" :
+                      "rgba(255,122,0,.25)";
+    pill.style.background =
+      kind==="bad"  ? "rgba(251,113,133,.12)" :
+      kind==="good" ? "rgba(34,197,94,.12)" :
+                      "rgba(255,122,0,.10)";
   }
 
-  function csvToRows(text){
+  // ===== CSV parser =====
+  function csvToRows(text) {
     const rows = [];
     let cur = [], field = "", inQuotes = false;
-    for(let i=0;i<text.length;i++){
+    for (let i=0; i<text.length; i++) {
       const c = text[i];
       const next = text[i+1];
-      if(c === '"'){
-        if(inQuotes && next === '"'){ field += '"'; i++; }
+      if (c === '"') {
+        if (inQuotes && next === '"') { field += '"'; i++; }
         else inQuotes = !inQuotes;
-      } else if(c === "," && !inQuotes){
-        cur.push(field); field="";
-      } else if((c === "\n" || c === "\r") && !inQuotes){
-        if(c === "\r" && next === "\n") i++;
-        cur.push(field); field="";
-        if(cur.some(x=>String(x).trim()!=="")) rows.push(cur);
+      } else if (c === "," && !inQuotes) {
+        cur.push(field); field = "";
+      } else if ((c === "\n" || c === "\r") && !inQuotes) {
+        if (c === "\r" && next === "\n") i++;
+        cur.push(field); field = "";
+        if (cur.some(x => String(x).trim() !== "")) rows.push(cur);
         cur = [];
       } else {
         field += c;
       }
     }
     cur.push(field);
-    if(cur.some(x=>String(x).trim()!=="")) rows.push(cur);
+    if (cur.some(x => String(x).trim() !== "")) rows.push(cur);
     return rows;
   }
 
-  function parseNumberBR(v){
-    if(v==null) return NaN;
+  function parseNumberBR(v) {
+    if (v == null) return NaN;
     let s = String(v).trim();
-    if(!s) return NaN;
-    s = s.replace(/[^\d,.-]/g,"");
+    if (!s) return NaN;
+    s = s.replace(/[^\d,.-]/g, "");
     const hasComma = s.includes(",");
     const hasDot = s.includes(".");
-    if(hasComma && hasDot) s = s.replace(/\./g,"").replace(",",".");
-    else if(hasComma && !hasDot) s = s.replace(",",".");
+    if (hasComma && hasDot) s = s.replace(/\./g, "").replace(",", ".");
+    else if (hasComma && !hasDot) s = s.replace(",", ".");
     const n = Number(s);
-    return isFinite(n) ? n : NaN;
+    return Number.isFinite(n) ? n : NaN;
   }
 
-  function parseDateBR(s){
+  function parseDateBR(s) {
     const t = norm(s);
     const m = t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if(!m) return null;
+    if (!m) return null;
     const d = Number(m[1]), mo = Number(m[2]), y = Number(m[3]);
-    if(!d || !mo || !y) return null;
+    if (!d || !mo || !y) return null;
     return new Date(Date.UTC(y, mo-1, d));
   }
-  function monthKeyFromDateStr(s){
+
+  function monthKeyFromDateStr(s) {
     const dt = parseDateBR(s);
-    if(!dt) return "";
+    if (!dt) return "";
     const y = dt.getUTCFullYear();
     const m = String(dt.getUTCMonth()+1).padStart(2,"0");
     return `${y}-${m}`;
   }
-  function monthLabel(mk){
+
+  function monthLabel(mk) {
     const [y,m] = mk.split("-");
     const names = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
     const idx = Number(m)-1;
-    return (names[idx]||m) + "/" + y;
+    return (names[idx] || m) + "/" + y;
+  }
+
+  function uniqSorted(arr) {
+    return [...new Set(arr.map(norm).filter(Boolean))].sort((a,b)=>a.localeCompare(b, "pt-BR"));
+  }
+
+  function findColByNames(possible) {
+    const map = header.map(h => ({ h, k: normKey(h) }));
+    for (const name of possible) {
+      const nk = normKey(name);
+      const exact = map.find(x => x.k === nk);
+      if (exact) return exact.h;
+    }
+    for (const name of possible) {
+      const nk = normKey(name);
+      const contains = map.find(x => x.k.includes(nk));
+      if (contains) return contains.h;
+    }
+    return "";
   }
 
   let header = [];
   let rows = [];
   let filtered = [];
 
-  function guessDateColumns(){
-    const scores = header.map(()=>0);
+  // ===== Columns / dropdowns =====
+  let dateCol = "";
+  let ownerCol = "";
+  let statusCol = "";
+  let sumCol = ""; // column to sum in KPI
+
+  function guessDateCol() {
+    if (!rows.length) return "";
     const sample = rows.slice(0, 200);
-    for(let c=0;c<header.length;c++){
-      let s=0;
-      for(const r of sample){
-        const v = r[header[c]];
-        if(parseDateBR(v)) s++;
+    let best = "", bestScore = 0;
+    for (const h of header) {
+      let score = 0;
+      for (const r of sample) {
+        if (parseDateBR(r[h])) score++;
       }
-      scores[c]=s;
+      if (score > bestScore) { bestScore = score; best = h; }
     }
-    const max = Math.max(...scores);
-    const candidates = [];
-    for(let i=0;i<scores.length;i++){
-      if(scores[i] > 0 && scores[i] >= Math.max(2, Math.floor(max*0.4))) candidates.push(header[i]);
-    }
-    return candidates;
+    return bestScore >= 2 ? best : "";
   }
 
-  function buildDropdowns(){
-    // Detecta melhor coluna de data automaticamente e guarda em qDateCol.dataset.auto
-    const dateCols = guessDateColumns();
-    const dcSel = el("qDateCol");
-    // (qDateCol é hidden; mantemos opções apenas para compatibilidade interna)
-    dcSel.innerHTML = `<option value="">(automático)</option>` + header.map(h=>`<option value="${h.replaceAll('"','&quot;')}">${h}</option>`).join("");
-    dcSel.dataset.auto = dateCols.length ? dateCols[0] : "";
+  function chooseSumCol() {
+    const prefer = findColByNames(["Valor","Value","Amount"]);
+    if (prefer) return prefer;
+    // otherwise first numeric-ish column
+    const sample = rows.slice(0, 200);
+    for (const h of header) {
+      let ok = 0;
+      for (const r of sample) {
+        if (Number.isFinite(parseNumberBR(r[h]))) ok++;
+      }
+      if (ok >= Math.max(3, Math.floor(sample.length * 0.25))) return h;
+    }
+    return "";
+  }
 
-    const uniq = (arr)=>[...new Set(arr.map(norm).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  function rebuildDropdowns() {
+    // columns
+    dateCol = guessDateCol();
+    ownerCol = findColByNames(["Responsável","Responsavel","Owner"]);
+    statusCol = findColByNames(["Situação","Situacao","Status"]);
+    sumCol = chooseSumCol();
 
-    // Responsável
-    const colOwner = findColByNames(["Responsável","Responsavel","Owner"]);
-    el("qOwner").dataset.col = colOwner;
+    el("kpiTotalHint").textContent = "coluna: " + (sumCol || "(nenhuma)");
+
+    // owners
     const ownerSel = el("qOwner");
-    ownerSel.innerHTML = `<option value="">Todos</option>` + (colOwner ? uniq(rows.map(r=>r[colOwner])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
+    ownerSel.innerHTML = `<option value="">Todos</option>` + (ownerCol
+      ? uniqSorted(rows.map(r => r[ownerCol])).map(v => `<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("")
+      : "");
 
-    // Situação
-    const colStatus = findColByNames(["Situação","Situacao","Status"]);
-    el("qStatus").dataset.col = colStatus;
-    const statusSel = el("qStatus");
-    statusSel.innerHTML = `<option value="">Todas</option>` + (colStatus ? uniq(rows.map(r=>r[colStatus])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
+    // status
+    const stSel = el("qStatus");
+    stSel.innerHTML = `<option value="">Todas</option>` + (statusCol
+      ? uniqSorted(rows.map(r => r[statusCol])).map(v => `<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("")
+      : "");
 
-    rebuildMonths();
-  }
-
-  function effectiveDateCol(){
-    return el("qDateCol")?.dataset?.auto || "";
-  }
-
-  function rebuildMonths(){
-    const col = effectiveDateCol();
+    // months
     const monthSel = el("qMonth");
-    if(!col){
+    if (dateCol) {
+      const months = uniqSorted(rows.map(r => monthKeyFromDateStr(r[dateCol])).filter(Boolean));
+      monthSel.innerHTML = `<option value="">Todos</option>` + months.map(m => `<option value="${m}">${monthLabel(m)}</option>`).join("");
+    } else {
       monthSel.innerHTML = `<option value="">Todos</option>`;
-      return;
     }
-    const months = [...new Set(rows.map(r=>monthKeyFromDateStr(r[col])))]
-      .filter(Boolean)
-      .sort((a,b)=>a.localeCompare(b));
-    monthSel.innerHTML = `<option value="">Todos</option>` + months.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join("");
   }
 
-  function setChips(){
+  // ===== Filters / render =====
+  function setChips() {
     const chips = [];
-    const add = (k,v)=>{ if(v) chips.push(`<span class="chip"><strong>${k}:</strong> ${v}</span>`); };
-
+    const add = (k,v)=>{ if (v) chips.push(`<span class="chip"><strong>${k}:</strong> ${v}</span>`); };
     add("Busca", el("qSearch").value.trim());
-
-    const owner = el("qOwner").value;
-    if(owner) add("Responsável", owner);
-
-    const st = el("qStatus").value;
-    if(st) add("Situação", st);
-
-    add("Data", effectiveDateCol() ? effectiveDateCol() : "");
-
-    const m = el("qMonth").value;
-    if(m) add("Mês", monthLabel(m));
-
+    if (el("qOwner").value) add("Responsável", el("qOwner").value);
+    if (el("qMonth").value) add("Mês", monthLabel(el("qMonth").value));
+    if (el("qStatus").value) add("Situação", el("qStatus").value);
     el("chips").innerHTML = chips.length ? chips.join("") : `<span class="chip"><strong>Sem filtros</strong></span>`;
   }
 
-  function applyFilters(){
+  function applyFilters() {
     const q = normKey(el("qSearch").value);
+    const owner = el("qOwner").value;
     const month = el("qMonth").value;
-    const dateCol = effectiveDateCol();
-    const limit = 500;
+    const st = el("qStatus").value;
 
-    const ownerCol = el("qOwner").dataset.col || "";
-    const prioCol  =     const owner = el("qOwner").value;
-    const prio  =     const statusCol = el("qStatus").dataset.col || "";
-    const status = el("qStatus").value;
-
-    filtered = rows.filter(r=>{
-      if(q){
-        const all = header.map(h=>normKey(r[h])).join(" | ");
-        if(!all.includes(q)) return false;
+    filtered = rows.filter(r => {
+      if (q) {
+        const all = header.map(h => normKey(r[h])).join(" | ");
+        if (!all.includes(q)) return false;
       }
-      if(ownerCol && owner && norm(r[ownerCol]) !== owner) return false;
-      if(statusCol && status && norm(r[statusCol]) !== status) return false;
-
-      if(month && dateCol){
-        const mk = monthKeyFromDateStr(r[dateCol]);
-        if(mk !== month) return false;
+      if (ownerCol && owner && norm(r[ownerCol]) !== owner) return false;
+      if (statusCol && st && norm(r[statusCol]) !== st) return false;
+      if (month && dateCol) {
+        if (monthKeyFromDateStr(r[dateCol]) !== month) return false;
       }
-
       return true;
     });
 
-    render(limit);
+    render();
   }
 
-  function render(limit){
+  function render() {
     setChips();
 
-    // Total
-    let sumCol = el("kpiTotal").dataset.col || "";
-    if(!sumCol){
-      // tenta achar primeira coluna numérica
-      const numericCols = header.filter(h=>{
-        let ok=0,total=0;
-        for(const r of rows.slice(0,200)){ total++; if(isFinite(parseNumberBR(r[h]))) ok++; }
-        return ok >= Math.max(3, Math.floor(total*0.25));
-      });
-      sumCol = numericCols[0] || "";
-      el("kpiTotal").dataset.col = sumCol;
-      el("kpiTotalHint").textContent = "coluna: " + (sumCol || "(nenhuma)");
-    }
-
-    if(sumCol){
-      let s=0, ok=0;
-      for(const r of filtered){
+    // KPI total
+    if (sumCol) {
+      let s = 0, ok = 0;
+      for (const r of filtered) {
         const n = parseNumberBR(r[sumCol]);
-        if(isFinite(n)){ s+=n; ok++; }
+        if (Number.isFinite(n)) { s += n; ok++; }
       }
-      el("kpiTotal").textContent = ok ? s.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—";
+      el("kpiTotal").textContent = ok
+        ? s.toLocaleString("pt-BR", { minimumFractionDigits:2, maximumFractionDigits:2 })
+        : "—";
     } else {
       el("kpiTotal").textContent = "—";
     }
 
-    // Mês de referência: se filtro mês escolhido, mostra ele; senão tenta inferir do conjunto filtrado (mais frequente)
-    const chosenMonth = el("qMonth").value;
-    if(chosenMonth){
-      el("kpiMonthRef").textContent = monthLabel(chosenMonth);
+    // KPI month reference
+    const chosen = el("qMonth").value;
+    if (chosen) {
+      el("kpiMonthRef").textContent = monthLabel(chosen);
       el("kpiMonthHint").textContent = "filtro aplicado";
-    } else {
-      const dateCol = effectiveDateCol();
-      if(dateCol){
-        const counts = {};
-        for(const r of filtered){
-          const mk = monthKeyFromDateStr(r[dateCol]);
-          if(!mk) continue;
-          counts[mk] = (counts[mk]||0) + 1;
-        }
-        const best = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0] || "";
-        el("kpiMonthRef").textContent = best ? monthLabel(best) : "—";
-        el("kpiMonthHint").textContent = best ? "mais recorrente" : "sem data";
-      } else {
-        el("kpiMonthRef").textContent = "—";
-        el("kpiMonthHint").textContent = "sem coluna de data";
+    } else if (dateCol) {
+      const counts = {};
+      for (const r of filtered) {
+        const mk = monthKeyFromDateStr(r[dateCol]);
+        if (!mk) continue;
+        counts[mk] = (counts[mk] || 0) + 1;
       }
+      const best = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0] || "";
+      el("kpiMonthRef").textContent = best ? monthLabel(best) : "—";
+      el("kpiMonthHint").textContent = best ? "mais recorrente" : "sem data";
+    } else {
+      el("kpiMonthRef").textContent = "—";
+      el("kpiMonthHint").textContent = "sem coluna de data";
     }
 
     // table header
     const th = el("thead");
     th.innerHTML = "";
-    for(const h of header){
+    for (const h of header) {
       const cell = document.createElement("th");
       cell.textContent = h;
       th.appendChild(cell);
     }
 
-    // table body
+    // table body (limit 500)
     const tb = el("tbody");
     tb.innerHTML = "";
-    for(const r of filtered.slice(0, limit)){
+    const limit = 500;
+    for (const r of filtered.slice(0, limit)) {
       const tr = document.createElement("tr");
-      for(const h of header){
+      for (const h of header) {
         const td = document.createElement("td");
         td.textContent = norm(r[h]);
         td.setAttribute("data-label", h);
@@ -622,57 +565,63 @@
 
     const note = el("noteBox");
     note.classList.toggle("hidden", filtered.length <= limit);
-    note.innerHTML = `Mostrando <b>${limit}</b> de <b>${filtered.length}</b> linhas. Ajuste “Limite de linhas” para ver mais.`;
+    note.innerHTML = `Mostrando <b>${Math.min(limit, filtered.length)}</b> de <b>${filtered.length}</b> linhas.`;
   }
 
-  async function loadCSV(){
+  // ===== Load CSV =====
+  async function loadCSV() {
     const base = el("csvUrl").value.trim();
-    if(!base){ el("csvUrl").value = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvQxmd-11ZBQSPMNAKkvI4m8BKi93KNjQDXOF0NSPB723dNkBZD7tYtk-jscQpeRFMUuHIIT2vp0fI/pub?output=csv&gid=1556121827&single=true"; } 
-    const base2 = el("csvUrl").value.trim();
-    if(!base2){ alert("Cole a URL do CSV."); return; }
-    const base = base2;
-    try{
+    if (!base) {
+      alert("Cole a URL do CSV.");
+      return;
+    }
+    try {
       setStatus("Carregando…");
       const bust = base + (base.includes("?") ? "&" : "?") + "t=" + Date.now();
-      const res = await fetch(bust, {cache:"no-store"});
-      if(!res.ok) throw new Error("HTTP " + res.status);
+      const res = await fetch(bust, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
       const text = await res.text();
       const raw = csvToRows(text);
-      if(raw.length < 2) throw new Error("CSV vazio ou inválido.");
+      if (raw.length < 2) throw new Error("CSV vazio ou inválido.");
 
       header = raw[0].map(norm);
-      rows = raw.slice(1).map(r=>{
-        const obj={};
-        for(let i=0;i<header.length;i++) obj[header[i]] = r[i] ?? "";
+      rows = raw.slice(1).map(r => {
+        const obj = {};
+        for (let i=0; i<header.length; i++) obj[header[i]] = r[i] ?? "";
         return obj;
-      }).filter(o=>Object.values(o).some(v=>norm(v)!==""));
+      }).filter(o => Object.values(o).some(v => norm(v) !== ""));
 
-      buildDropdowns();
+      rebuildDropdowns();
       applyFilters();
       setStatus("CSV: carregado", "good");
       localStorage.setItem("csv_url", base);
-    } catch(err){
+    } catch (err) {
       console.error(err);
       setStatus("Erro ao carregar", "bad");
       const note = el("noteBox");
       note.classList.remove("hidden");
-      note.innerHTML = `<b>Erro:</b> ${String(err.message).replaceAll("<","&lt;")}<br><div class="small">Se o Google Sheets não estiver publicado como CSV, o painel não conseguirá ler.</div>`;
-      alert("Falha ao carregar o CSV. Veja o aviso no painel.");
+      note.innerHTML = `<b>Erro:</b> ${String(err.message).replaceAll("<","&lt;")}<br><div class="small">Verifique se o Google Sheets está publicado como CSV.</div>`;
+      alert("Falha ao carregar o CSV. Veja o Console/F12.");
     }
   }
 
-  function exportFiltered(){
-    if(!filtered.length){ alert("Nada para exportar."); return; }
+  // ===== Export =====
+  function exportFiltered() {
+    if (!filtered.length) {
+      alert("Nada para exportar.");
+      return;
+    }
     const out = [];
     out.push(header);
-    for(const r of filtered) out.push(header.map(h=>String(r[h]??"")));
-    const esc = (s)=>{
-      s = String(s??"");
-      if(/[",\n\r]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+    for (const r of filtered) out.push(header.map(h => String(r[h] ?? "")));
+
+    const esc = (s) => {
+      s = String(s ?? "");
+      if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
       return s;
     };
-    const csv = out.map(r=>r.map(esc).join(",")).join("\n");
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+    const csv = out.map(r => r.map(esc).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -683,31 +632,23 @@
     URL.revokeObjectURL(url);
   }
 
-  el("btnLoad").addEventListener("click", loadCSV);
-  el("btnLoad2").addEventListener("click", loadCSV);
+  // ===== Events =====
+  el("btnReload").addEventListener("click", loadCSV);
   el("btnExport").addEventListener("click", exportFiltered);
 
-  ["qSearch","qOwner","qStatus","qMonth"].forEach(id=>{
-    el(id).addEventListener("input", ()=>{
-      if(id==="qDateCol") rebuildMonths();
-      applyFilters();
-    });
-    el(id).addEventListener("change", ()=>{
-      if(id==="qDateCol") rebuildMonths();
-      applyFilters();
-    });
+  ["qSearch","qOwner","qMonth","qStatus"].forEach(id => {
+    el(id).addEventListener("input", applyFilters);
+    el(id).addEventListener("change", applyFilters);
   });
 
+  // default URL + autoload
   el("csvUrl").value = localStorage.getItem("csv_url") || "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvQxmd-11ZBQSPMNAKkvI4m8BKi93KNjQDXOF0NSPB723dNkBZD7tYtk-jscQpeRFMUuHIIT2vp0fI/pub?output=csv&gid=1556121827&single=true";
   loadCSV();
 
-// 🔄 Auto-atualização a cada 30 minutos (mantém botão manual)
-let __autoRefresh = null;
-function startAutoRefresh(){
-  if(__autoRefresh) return;
-  __autoRefresh = setInterval(()=>{ loadCSV(); }, 1800000);
-}
-startAutoRefresh();
+  // Auto refresh every 30 minutes
+  setInterval(loadCSV, 1800000);
+
+})();
 </script>
 </body>
 </html>
