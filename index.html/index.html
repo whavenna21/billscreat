@@ -92,6 +92,11 @@
     .sep{height:1px;background:rgba(36,50,74,.35);margin:12px 0}
 
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+    /* KPIs do resumo (2 cards) */
+    #kpiGrid{grid-template-columns:repeat(2,1fr)}
+    @media (max-width:980px){#kpiGrid{grid-template-columns:1fr}}
+
     @media (max-width:980px){.grid4{grid-template-columns:repeat(2,1fr)}}
     .kpi{padding:12px;border-radius:14px;background:var(--card2);border:1px solid rgba(255,122,0,.18)}
     .kpi .label{color:var(--muted);font-size:12px}
@@ -196,11 +201,17 @@
 
     <section class="card">
       <h2>Resumo</h2>
-      <div class="grid4">
-        <div class="kpi"><div class="label">Linhas (após filtros)</div><div class="value" id="kpiRows">—</div><div class="hint">registros</div></div>
-        <div class="kpi"><div class="label">Somatório (coluna numérica)</div><div class="value" id="kpiSum">—</div><div class="hint" id="kpiSumHint">selecione uma coluna</div></div>
-        <div class="kpi"><div class="label">Mês selecionado</div><div class="value" id="kpiMonth">—</div><div class="hint">filtro por data</div></div>
-        <div class="kpi"><div class="label">Última atualização</div><div class="value" id="kpiUpdated">—</div><div class="hint">timestamp</div></div>
+      <div class="grid4" id="kpiGrid">
+        <div class="kpi">
+          <div class="label">Total (conforme filtros)</div>
+          <div class="value" id="kpiTotal">—</div>
+          <div class="hint" id="kpiTotalHint">coluna: Valor</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Mês de referência</div>
+          <div class="value" id="kpiMonthRef">—</div>
+          <div class="hint" id="kpiMonthHint">conforme filtro</div>
+        </div>
       </div>
 
       <div class="sep"></div>
@@ -211,27 +222,41 @@
           <label for="qSearch">Busca geral</label>
           <input id="qSearch" placeholder="busca em todas as colunas" />
         </div>
+
+        <div>
+          <label for="qOwner">Responsável</label>
+          <select id="qOwner"><option value="">Todos</option></select>
+        </div>
+
+        <div>
+          <label for="qPriority">Prioridade</label>
+          <select id="qPriority"><option value="">Todas</option></select>
+        </div>
+
+        <div>
+          <label for="qStatus">Situação</label>
+          <select id="qStatus"><option value="">Todas</option></select>
+        </div>
+
         <div>
           <label for="qMonth">Mês (coluna de data)</label>
           <select id="qMonth"><option value="">Todos</option></select>
         </div>
+
+        
+
         <div>
-          <label for="qDateCol">Coluna de data</label>
-          <select id="qDateCol"><option value="">(automático)</option></select>
+          <label for="qDateFrom">Data (de)</label>
+          <input id="qDateFrom" type="date" />
         </div>
+
         <div>
-          <label for="qSumCol">Coluna para somar</label>
-          <select id="qSumCol"><option value="">(nenhuma)</option></select>
+          <label for="qDateTo">Data (até)</label>
+          <input id="qDateTo" type="date" />
         </div>
-        <div>
-          <label for="qLimit">Limite de linhas</label>
-          <select id="qLimit">
-            <option value="200">200</option>
-            <option value="500" selected>500</option>
-            <option value="1000">1000</option>
-            <option value="5000">5000</option>
-          </select>
-        </div>
+
+        
+
         <div>
           <label for="btnLoad">Atualização</label>
           <button id="btnLoad" style="width:100%">Carregar/Atualizar</button>
@@ -267,6 +292,30 @@
   const el = (id)=>document.getElementById(id);
   const norm = (s)=>String(s??"").trim();
   const normKey = (s)=>norm(s).toLowerCase();
+
+  function findColByNames(possible){
+    const map = header.map(h=>({h, k:normKey(h)}));
+    for(const name of possible){
+      const nk = normKey(name);
+      const exact = map.find(x=>x.k===nk);
+      if(exact) return exact.h;
+    }
+    // contains match
+    for(const name of possible){
+      const nk = normKey(name);
+      const contains = map.find(x=>x.k.includes(nk));
+      if(contains) return contains.h;
+    }
+    return "";
+  }
+
+  function isoToDateUTC(iso){
+    // iso yyyy-mm-dd
+    const m = String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!m) return null;
+    return new Date(Date.UTC(Number(m[1]), Number(m[2])-1, Number(m[3])));
+  }
+
 
   function applyTheme(theme){
     document.body.classList.toggle("light", theme==="light");
@@ -375,24 +424,34 @@
     dcSel.innerHTML = `<option value="">(automático)</option>` + header.map(h=>`<option value="${h.replaceAll('"','&quot;')}">${h}</option>`).join("");
     dcSel.dataset.auto = dateCols.length ? dateCols[0] : "";
 
-    const sumSel = el("qSumCol");
-    const numericCols = header.filter(h=>{
-      let ok=0, total=0;
-      for(const r of rows.slice(0,200)){
-        total++;
-        if(isFinite(parseNumberBR(r[h]))) ok++;
-      }
-      return ok >= Math.max(3, Math.floor(total*0.25));
-    });
-    sumSel.innerHTML = `<option value="">(nenhuma)</option>` + numericCols.map(h=>`<option value="${h.replaceAll('"','&quot;')}">${h}</option>`).join("");
-    const lastSum = localStorage.getItem("csv_sum_col") || "";
-    if(lastSum && numericCols.includes(lastSum)) sumSel.value = lastSum;
+    // Responsável / Prioridade (se existirem)
+    const colOwner = findColByNames(["Responsável","Responsavel","Responsavel(a)","Owner"]);
+    const colPrio  = findColByNames(["Prioridade","Priority"]);
+    el("qOwner").dataset.col = colOwner;
+    el("qPriority").dataset.col = colPrio;
+
+    const uniq = (arr)=>[...new Set(arr.map(norm).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+    const ownerSel = el("qOwner");
+    ownerSel.innerHTML = `<option value="">Todos</option>` + (colOwner ? uniq(rows.map(r=>r[colOwner])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");
+    const prioSel = el("qPriority");
+    prioSel.innerHTML = `<option value="">Todas</option>` + (colPrio ? uniq(rows.map(r=>r[colPrio])).map(v=>`<option value="${v.replaceAll('"','&quot;
+
+    const colStatus = findColByNames(["Situação","Situacao","Status"]);
+    el("qStatus").dataset.col = colStatus;
+    const statusSel = el("qStatus");
+    statusSel.innerHTML = `<option value="">Todas</option>` + (colStatus ? uniq(rows.map(r=>r[colStatus])).map(v=>`<option value="${v.replaceAll('"','&quot;')}">${v}</option>`).join("") : "");')}">${v}</option>`).join("") : "");
+
+    // escolher coluna de valor para somar (fixa: Valor, se existir)
+    const valCol = findColByNames(["Valor","Value","Amount"]);
+    el("kpiTotal").dataset.col = valCol || "";
+    el("kpiTotalHint").textContent = "coluna: " + (valCol || "(auto)");
 
     rebuildMonths();
   }
 
   function effectiveDateCol(){
-    return el("qDateCol").value || el("qDateCol").dataset.auto || "";
+    return el("qDateCol")?.dataset?.auto || "";
   }
 
   function rebuildMonths(){
@@ -411,10 +470,30 @@
   function setChips(){
     const chips = [];
     const add = (k,v)=>{ if(v) chips.push(`<span class="chip"><strong>${k}:</strong> ${v}</span>`); };
+
     add("Busca", el("qSearch").value.trim());
+
+    const owner = el("qOwner").value;
+    if(owner) add("Responsável", owner);
+
+    const pr = el("qPriority").value;
+    if(pr) add("Prioridade", pr);
+
+    const st = el("qStatus").value;
+    if(st) add("Situação", st);
+
     add("Data", effectiveDateCol() ? effectiveDateCol() : "");
-    add("Mês", el("qMonth").value ? monthLabel(el("qMonth").value) : "");
-    add("Somar", el("qSumCol").value);
+
+    const m = el("qMonth").value;
+    if(m) add("Mês", monthLabel(m));
+
+    const df = el("qDateFrom").value;
+    const dt = el("qDateTo").value;
+    if(df || dt){
+      const pretty = (x)=>x ? x.split("-").reverse().join("/") : "";
+      add("Período", `${pretty(df)}${dt ? " → " + pretty(dt) : ""}`);
+    }
+
     el("chips").innerHTML = chips.length ? chips.join("") : `<span class="chip"><strong>Sem filtros</strong></span>`;
   }
 
@@ -422,17 +501,41 @@
     const q = normKey(el("qSearch").value);
     const month = el("qMonth").value;
     const dateCol = effectiveDateCol();
-    const limit = Number(el("qLimit").value) || 500;
+    const limit = 500;
+
+    const ownerCol = el("qOwner").dataset.col || "";
+    const prioCol  = el("qPriority").dataset.col || "";
+    const owner = el("qOwner").value;
+    const prio  = el("qPriority").value;
+    const statusCol = el("qStatus").dataset.col || "";
+    const status = el("qStatus").value;
+
+    const from = isoToDateUTC(el("qDateFrom").value);
+    const to   = isoToDateUTC(el("qDateTo").value);
+    // incluir o "até" como final do dia
+    const toEnd = to ? new Date(to.getTime() + 24*60*60*1000 - 1) : null;
 
     filtered = rows.filter(r=>{
       if(q){
         const all = header.map(h=>normKey(r[h])).join(" | ");
         if(!all.includes(q)) return false;
       }
+      if(ownerCol && owner && norm(r[ownerCol]) !== owner) return false;
+      if(prioCol && prio && norm(r[prioCol]) !== prio) return false;
+      if(statusCol && status && norm(r[statusCol]) !== status) return false;
+
       if(month && dateCol){
         const mk = monthKeyFromDateStr(r[dateCol]);
         if(mk !== month) return false;
       }
+
+      if((from || toEnd) && dateCol){
+        const dtv = parseDateBR(r[dateCol]);
+        if(!dtv) return false;
+        if(from && dtv < from) return false;
+        if(toEnd && dtv > toEnd) return false;
+      }
+
       return true;
     });
 
@@ -442,25 +545,55 @@
   function render(limit){
     setChips();
 
-    el("kpiRows").textContent = filtered.length.toLocaleString("pt-BR");
-    el("kpiMonth").textContent = el("qMonth").value ? monthLabel(el("qMonth").value) : "Todos";
-    el("kpiUpdated").textContent = new Date().toLocaleString("pt-BR");
+    // Total
+    let sumCol = el("kpiTotal").dataset.col || "";
+    if(!sumCol){
+      // tenta achar primeira coluna numérica
+      const numericCols = header.filter(h=>{
+        let ok=0,total=0;
+        for(const r of rows.slice(0,200)){ total++; if(isFinite(parseNumberBR(r[h]))) ok++; }
+        return ok >= Math.max(3, Math.floor(total*0.25));
+      });
+      sumCol = numericCols[0] || "";
+      el("kpiTotal").dataset.col = sumCol;
+      el("kpiTotalHint").textContent = "coluna: " + (sumCol || "(nenhuma)");
+    }
 
-    const sumCol = el("qSumCol").value;
     if(sumCol){
       let s=0, ok=0;
       for(const r of filtered){
         const n = parseNumberBR(r[sumCol]);
         if(isFinite(n)){ s+=n; ok++; }
       }
-      el("kpiSum").textContent = ok ? s.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—";
-      el("kpiSumHint").textContent = sumCol;
-      localStorage.setItem("csv_sum_col", sumCol);
+      el("kpiTotal").textContent = ok ? s.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2}) : "—";
     } else {
-      el("kpiSum").textContent = "—";
-      el("kpiSumHint").textContent = "selecione uma coluna";
+      el("kpiTotal").textContent = "—";
     }
 
+    // Mês de referência: se filtro mês escolhido, mostra ele; senão tenta inferir do conjunto filtrado (mais frequente)
+    const chosenMonth = el("qMonth").value;
+    if(chosenMonth){
+      el("kpiMonthRef").textContent = monthLabel(chosenMonth);
+      el("kpiMonthHint").textContent = "filtro aplicado";
+    } else {
+      const dateCol = effectiveDateCol();
+      if(dateCol){
+        const counts = {};
+        for(const r of filtered){
+          const mk = monthKeyFromDateStr(r[dateCol]);
+          if(!mk) continue;
+          counts[mk] = (counts[mk]||0) + 1;
+        }
+        const best = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0] || "";
+        el("kpiMonthRef").textContent = best ? monthLabel(best) : "—";
+        el("kpiMonthHint").textContent = best ? "mais recorrente" : "sem data";
+      } else {
+        el("kpiMonthRef").textContent = "—";
+        el("kpiMonthHint").textContent = "sem coluna de data";
+      }
+    }
+
+    // table header
     const th = el("thead");
     th.innerHTML = "";
     for(const h of header){
@@ -469,6 +602,7 @@
       th.appendChild(cell);
     }
 
+    // table body
     const tb = el("tbody");
     tb.innerHTML = "";
     for(const r of filtered.slice(0, limit)){
@@ -545,7 +679,7 @@
   el("btnLoad").addEventListener("click", loadCSV);
   el("btnExport").addEventListener("click", exportFiltered);
 
-  ["qSearch","qMonth","qDateCol","qSumCol","qLimit"].forEach(id=>{
+  ["qSearch","qOwner","qPriority","qStatus","qMonth","qDateFrom","qDateTo"].forEach(id=>{
     el(id).addEventListener("input", ()=>{
       if(id==="qDateCol") rebuildMonths();
       applyFilters();
@@ -558,6 +692,14 @@
 
   el("csvUrl").value = localStorage.getItem("csv_url") || "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvQxmd-11ZBQSPMNAKkvI4m8BKi93KNjQDXOF0NSPB723dNkBZD7tYtk-jscQpeRFMUuHIIT2vp0fI/pub?output=csv&gid=1556121827&single=true";
   loadCSV();
+
+// 🔄 Auto-atualização a cada 30 minutos (mantém botão manual)
+let __autoRefresh = null;
+function startAutoRefresh(){
+  if(__autoRefresh) return;
+  __autoRefresh = setInterval(()=>{ loadCSV(); }, 1800000);
+}
+startAutoRefresh();
 </script>
 </body>
 </html>
