@@ -637,7 +637,10 @@
 
   async function loadCSV(){
     const base = el("csvUrl").value.trim();
-    if(!base){ alert("Cole a URL do CSV."); return; }
+    if(!base){ el("csvUrl").value = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvQxmd-11ZBQSPMNAKkvI4m8BKi93KNjQDXOF0NSPB723dNkBZD7tYtk-jscQpeRFMUuHIIT2vp0fI/pub?output=csv&gid=1556121827&single=true"; } 
+    const base2 = el("csvUrl").value.trim();
+    if(!base2){ alert("Cole a URL do CSV."); return; }
+    const base = base2;
     try{
       setStatus("Carregando…");
       const bust = base + (base.includes("?") ? "&" : "?") + "t=" + Date.now();
